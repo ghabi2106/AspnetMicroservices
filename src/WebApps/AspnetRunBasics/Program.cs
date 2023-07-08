@@ -3,6 +3,9 @@ using Common.Logging;
 using Polly.Extensions.Http;
 using Polly;
 using Serilog;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SeriLogger.Configure);
@@ -28,6 +31,10 @@ builder.Services.AddHttpClient<IOrderService, OrderService>(c => c.BaseAddress =
     .AddPolicyHandler(GetCircuitBreakerPolicy());
 
 builder.Services.AddRazorPages();
+builder.Services.AddHealthChecks()
+    .AddUrlGroup(
+        new Uri(builder.Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", 
+        HealthStatus.Degraded);
 
 var app = builder.Build();
 
@@ -45,6 +52,11 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
 

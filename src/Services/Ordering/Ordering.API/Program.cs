@@ -1,6 +1,8 @@
 using Common.Logging;
 using EventBus.Messages.Common;
+using HealthChecks.UI.Client;
 using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Ordering.API.EventBusConsumer;
 using Ordering.API.Extensions;
@@ -37,6 +39,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<OrderContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,6 +54,11 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.MigrateDatabase<OrderContext>((context, services) =>
 {
