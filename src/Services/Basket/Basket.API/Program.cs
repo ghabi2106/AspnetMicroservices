@@ -46,6 +46,8 @@ builder.Services.AddHealthChecks()
                         "Redis Health",
                         HealthStatus.Degraded);
 
+builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

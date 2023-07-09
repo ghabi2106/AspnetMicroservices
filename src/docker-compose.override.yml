@@ -69,6 +69,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=catalog.api"
     depends_on:
       - catalogdb
     ports:
@@ -82,6 +84,8 @@ services:
       - "GrpcSettings:DiscountUrl=http://discount.grpc"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=basket.api"
     depends_on:
       - basketdb
       - rabbitmq
@@ -94,6 +98,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=discount.api"
     depends_on:
       - discountdb
     ports:
@@ -105,6 +111,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=discount.grpc"
     depends_on:
       - discountdb
     ports:
@@ -117,6 +125,8 @@ services:
       - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=SwN12345678;trusted_connection=true;encrypt=false;Integrated Security=false;"  
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=ordering.api"
     depends_on:
       - orderdb
       - rabbitmq
@@ -144,6 +154,8 @@ services:
       - "ApiSettings:BasketUrl=http://basket.api"
       - "ApiSettings:OrderingUrl=http://ordering.api"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=shopping.aggregator"
     depends_on:
       - catalog.api
       - basket.api
@@ -157,6 +169,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ApiSettings:GatewayAddress=http://ocelotapigw"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=aspnetrunbasics"
     depends_on:
       - ocelotapigw
       - catalog.api
@@ -205,4 +219,18 @@ services:
       - HealthChecksUI__HealthChecks__5__Uri=http://aspnetrunbasics/hc
     ports:
       - "8007:80"
+
+  zipkin:
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+      # Point the zipkin at the storage backend
+      - MYSQL_HOST=mysql
+      # Uncomment to enable self-tracing
+      # - SELF_TRACING_ENABLED=true
+      # Uncomment to increase heap size
+      # - JAVA_OPTS=-Xms128m -Xmx128m -XX:+ExitOnOutOfMemoryError
+    ports:
+      - "9411:9411"
+
 

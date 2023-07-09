@@ -36,6 +36,8 @@ builder.Services.AddHealthChecks()
         new Uri(builder.Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", 
         HealthStatus.Degraded);
 
+builder.Services.AddOpenTelemetryTracingHttp(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

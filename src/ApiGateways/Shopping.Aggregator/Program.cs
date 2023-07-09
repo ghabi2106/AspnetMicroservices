@@ -41,6 +41,8 @@ builder.Services.AddHealthChecks()
         .AddUrlGroup(new Uri($"{builder.Configuration["ApiSettings:BasketUrl"]}/swagger/index.html"), "Basket.API", HealthStatus.Degraded)
         .AddUrlGroup(new Uri($"{builder.Configuration["ApiSettings:OrderingUrl"]}/swagger/index.html"), "Ordering.API", HealthStatus.Degraded);
 
+builder.Services.AddOpenTelemetryTracingHttp(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

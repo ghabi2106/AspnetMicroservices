@@ -23,6 +23,8 @@ builder.Services.AddHealthChecks()
                 "Catalog MongoDb Health",
                 HealthStatus.Degraded);
 
+builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,3 +44,4 @@ app.MapHealthChecks("/hc", new HealthCheckOptions()
 });
 
 app.Run();
+

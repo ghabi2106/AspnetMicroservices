@@ -19,6 +19,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration["DatabaseSettings:ConnectionString"]);
 
+builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
