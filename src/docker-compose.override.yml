@@ -244,7 +244,7 @@ services:
     container_name: identity.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=IdentityDb;User Id=sa;Password=SwN12345678;trusted_connection=true;encrypt=false;Integrated Security=false;"
+      - "ConnectionStrings:IdentityConnectionString=Server=orderdb;Database=IdentityDb;User Id=sa;Password=SwN12345678;trusted_connection=true;encrypt=false;Integrated Security=false;"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
       - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
       - "OpenTelemetry:ServiceName=identity.api"
