@@ -85,12 +85,19 @@ services:
   zipkin:
     image: openzipkin/zipkin
 
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+
 volumes:
   mongo_data:
   portainer_data:
   postgres_data:
   pgadmin_data:
   elasticsearch-data:
+
 
 
 

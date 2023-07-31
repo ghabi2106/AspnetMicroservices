@@ -87,9 +87,11 @@ services:
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
       - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
       - "OpenTelemetry:ServiceName=basket.api"
+      - "IdentityApiClient: http://identity.api"
     depends_on:
       - basketdb
       - rabbitmq
+      - identity.api
     ports:
       - "8001:80"
 
@@ -172,12 +174,14 @@ services:
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
       - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
       - "OpenTelemetry:ServiceName=aspnetrunbasics"
+      - "IdentityApiClient: http://identity.api"
     depends_on:
       - ocelotapigw
       - catalog.api
       - basket.api
       - discount.api
       - ordering.api
+      - identity.api
     ports:
       - "8006:80"
   
@@ -234,4 +238,20 @@ services:
     ports:
       - "9411:9411"
 
+
+
+  identity.api:
+    container_name: identity.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=IdentityDb;User Id=sa;Password=SwN12345678;trusted_connection=true;encrypt=false;Integrated Security=false;"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "Zipkin:Endpoint=http://zipkin:9411/api/v2/spans"
+      - "OpenTelemetry:ServiceName=identity.api"
+      - "RetryMigrations: false"
+      - "MvcClient: http://aspnetrunbasics"
+    depends_on:
+      - orderdb
+    ports:
+      - "8008:80"
 
